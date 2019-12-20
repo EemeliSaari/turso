@@ -28,23 +28,21 @@ type Listener struct {
 
 // NewListener ...
 func NewListener(src []string, interval time.Duration) *Listener {
-	fp := gofeed.NewParser()
 	fl := Listener{
-		parser:  fp,
+		parser:  gofeed.NewParser(),
+		ticker:  time.NewTicker(interval * time.Second),
 		Sources: src,
 		running: false,
 		buffer:  buffer.NewBuffer(),
+		stop:    make(chan bool),
 	}
-	fl.stop = make(chan bool)
-	fl.ticker = time.NewTicker(interval * time.Second)
-
 	return &fl
 }
 
 // Start ...
-func (fl Listener) Start() (chan bool, error) {
+func (fl Listener) Start() error {
 	if fl.running {
-		return fl.stop, errors.New("can't start running")
+		return errors.New("can't start running")
 	}
 
 	go func() {
@@ -61,19 +59,19 @@ func (fl Listener) Start() (chan bool, error) {
 
 	fl.running = true
 
-	return fl.stop, nil
+	return nil
 }
 
 // Stop ...
-func (fl Listener) Stop() (chan bool, error) {
+func (fl Listener) Stop() error {
 	if fl.running != false {
-		return fl.stop, errors.New("can't stop stopped")
+		return errors.New("can't stop stopped")
 	}
 
 	fl.stop <- false
 	fl.running = false
 
-	return fl.stop, nil
+	return nil
 }
 
 // AddCallback ...
@@ -93,8 +91,7 @@ func (fl Listener) tick() {
 			item := feed.Items[idx]
 			article := newArticle(item)
 
-			isNew := fl.buffer.Add(article)
-			if isNew {
+			if isNew := fl.buffer.Add(article); isNew {
 				articles = append(articles, article)
 			}
 		}
@@ -117,5 +114,6 @@ func (fl Listener) callback(articles []*Article) {
 			fl.callbacks[idx](articles)
 		}(i)
 	}
+
 	wg.Wait()
 }
