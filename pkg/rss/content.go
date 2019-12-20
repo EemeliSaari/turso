@@ -8,6 +8,7 @@ import (
 	"runtime"
 	"sync"
 
+	"github.com/EemeliSaari/turso/pkg/crawl"
 	"github.com/mmcdole/gofeed"
 )
 
@@ -54,6 +55,17 @@ func (a Article) fetchHTML() {
 func (a Article) Hash() [16]byte {
 	jsonBytes, _ := json.Marshal(a.Item)
 	return md5.Sum(jsonBytes)
+}
+
+func (a Article) crawl() {
+	if len(a.html) == 0 {
+		a.fetchHTML()
+	}
+	html := a.html
+
+	crawler := crawl.NewCrawler()
+	content, _ := crawler.FindContent(html)
+	a.Item.Content = content
 }
 
 func loadContent(articles []*Article) {
