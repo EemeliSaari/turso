@@ -65,7 +65,7 @@ func (fl Listener) Start() error {
 // Stop ...
 func (fl Listener) Stop() error {
 	if fl.running != false {
-		return errors.New("can't stop stopped")
+		return errors.New("Can't stop stopped")
 	}
 
 	fl.stop <- false
@@ -85,18 +85,20 @@ func (fl Listener) tick() {
 
 	for i := 0; i < len(fl.Sources); i++ {
 		url := fl.Sources[i]
-		feed, _ := fl.parser.ParseURL(url)
-
+		feed, err := fl.parser.ParseURL(url)
+		if err != nil {
+			//TODO: log the error and continue.
+			panic(err)
+		}
 		for idx := 0; idx < len(feed.Items); idx++ {
 			item := feed.Items[idx]
-			article := newArticle(item)
+			article := NewArticle(item)
 
 			if isNew := fl.buffer.Add(article); isNew {
 				articles = append(articles, article)
 			}
 		}
 	}
-
 	loadContent(articles)
 
 	if len(articles) > 0 {
