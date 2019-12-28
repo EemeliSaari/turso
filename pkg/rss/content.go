@@ -14,23 +14,23 @@ import (
 
 // Article ...
 type Article struct {
-	Item *gofeed.Item
-
-	html   []byte
-	loaded bool
+	Item      *gofeed.Item
+	Loaded    bool   `json:"loaded"`
+	Erroneous string `json:"errorneous"`
 }
 
 // NewArticle ...
-func newArticle(item *gofeed.Item) *Article {
+func NewArticle(item *gofeed.Item) *Article {
 	return &Article{
-		Item: item, html: []byte{},
-		loaded: len(item.Content) > 0,
+		Item:      item,
+		Loaded:    len(item.Content) > 0,
+		Erroneous: "",
 	}
 }
 
 // FetchHTML ...
 func (a Article) fetchHTML() {
-	if a.loaded {
+	if a.Loaded {
 		return
 	}
 
@@ -47,25 +47,21 @@ func (a Article) fetchHTML() {
 	if err != nil {
 		panic(err)
 	}
-	a.html = html
-	a.loaded = true
+
+	crawler := crawl.NewCrawler()
+	content, err := crawler.FindArticleContent(html)
+	if err != nil {
+		a.Erroneous = err.Error()
+	} else {
+		a.Item.Content = content
+	}
+	a.Loaded = true
 }
 
 // Hash ...
 func (a Article) Hash() [16]byte {
 	jsonBytes, _ := json.Marshal(a.Item)
 	return md5.Sum(jsonBytes)
-}
-
-func (a Article) crawl() {
-	if len(a.html) == 0 {
-		a.fetchHTML()
-	}
-	html := a.html
-
-	crawler := crawl.NewCrawler()
-	content, _ := crawler.FindContent(html)
-	a.Item.Content = content
 }
 
 func loadContent(articles []*Article) {
