@@ -16,18 +16,24 @@ func TestFindContent(t *testing.T) {
 		content  string
 		hasError bool
 	}{
-		{"testdata/simple.html", "Sample text", false},
-		{"testdata/complex.html", "<p>Paragraph 1</p><p>Paragraph 2</p>", false},
+		{
+			"testdata/simple.html",
+			"<div class=\"some-article-body\">Sample text</div>",
+			false},
+		{
+			"testdata/complex.html",
+			"<div class=\"org article-content\"><p>Paragraph 1</p><p>Paragraph 2</p></div>",
+			false},
 		{"testdata/empty.html", "", true},
 	}
 	for _, test := range tests {
 		data := loadHTML(test.path)
 
-		content, err := crawler.FindContent(data)
+		content, err := crawler.FindArticleContent(data)
 
 		if test.hasError {
 			assert.NotNil(t, err)
-			assert.Nil(t, content)
+			assert.Equal(t, "", content)
 		} else {
 			assert.NotNil(t, content)
 			assert.Nil(t, err)
