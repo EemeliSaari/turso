@@ -3,6 +3,7 @@ package rss
 import (
 	"crypto/md5"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"runtime"
@@ -14,21 +15,29 @@ import (
 
 // Article ...
 type Article struct {
-	Item      *gofeed.Item
+	*gofeed.Item
 	Loaded    bool   `json:"loaded"`
 	Erroneous string `json:"errorneous"`
+	Checksum  string `json:"checksum"`
 }
 
 // NewArticle ...
 func NewArticle(item *gofeed.Item) *Article {
-	return &Article{
+	a := Article{
 		Item:      item,
 		Loaded:    len(item.Content) > 0,
 		Erroneous: "",
 	}
+	a.Checksum = fmt.Sprintf("%x", a.Hash())
+	return &a
 }
 
-// FetchHTML ...
+// Hash ...
+func (a Article) Hash() [16]byte {
+	jsonBytes, _ := json.Marshal(a.Item)
+	return md5.Sum(jsonBytes)
+}
+
 func (a Article) fetchHTML() {
 	if a.Loaded {
 		return
@@ -56,12 +65,6 @@ func (a Article) fetchHTML() {
 		a.Item.Content = content
 	}
 	a.Loaded = true
-}
-
-// Hash ...
-func (a Article) Hash() [16]byte {
-	jsonBytes, _ := json.Marshal(a.Item)
-	return md5.Sum(jsonBytes)
 }
 
 func loadContent(articles []*Article) {

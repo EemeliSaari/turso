@@ -21,10 +21,10 @@ func NewCrawler() *Crawler {
 	return &c
 }
 
-// FindContent ...
+// FindArticleContent ...
 func (c Crawler) FindArticleContent(data []byte) (string, error) {
 	if len(data) == 0 {
-		return "", errors.New("Empty data received.")
+		return "", errors.New("empty data received")
 	}
 
 	raw := bytes.NewReader(data)
@@ -63,7 +63,7 @@ func (c Crawler) FindArticleContent(data []byte) (string, error) {
 	runner(doc, true)
 
 	if articleBody == nil {
-		return "", errors.New("Could not find valid articles.")
+		return "", errors.New("could not find valid articles")
 	}
 
 	// Prune the HTML
@@ -119,7 +119,7 @@ func searchBody(node *html.Node) (*html.Node, error) {
 	f(node)
 
 	if res == nil {
-		return nil, errors.New("Could not find article body.")
+		return nil, errors.New("could not find article body")
 	}
 
 	return res, nil

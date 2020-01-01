@@ -1,20 +1,20 @@
 package rabbit
 
-// Config...
+// Config ...
 type Config struct {
-	Host         string
-	Port         int
-	Username     string
-	Password     string
-	Vhost        string
-	Queue        string
-	Durable      bool
-	DeleteUnused bool
-	Exclusive    bool
-	NoWait       bool
+	Host         string `json:"host"`
+	Port         int    `json:"port"`
+	Username     string `json:"username"`
+	Password     string `json:"password"`
+	Vhost        string `json:"vhost"`
+	Queue        string `json:"queue"`
+	Durable      bool   `json:"durable"`
+	DeleteUnused bool   `json:"delete_unused"`
+	Exclusive    bool   `json:"exlusive"`
+	NoWait       bool   `json:"no_wait"`
 }
 
-// PublisherConfig...
+// PublisherConfig ...
 type PublisherConfig struct {
 	*Config
 
@@ -22,7 +22,7 @@ type PublisherConfig struct {
 	Immidiate bool
 }
 
-// ConsumerConfig...
+// ConsumerConfig ...
 type ConsumerConfig struct {
 	*Config
 

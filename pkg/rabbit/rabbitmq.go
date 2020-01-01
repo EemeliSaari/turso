@@ -4,14 +4,14 @@ import (
 	"github.com/streadway/amqp"
 )
 
-// RabbitMQ...
+// RabbitMQ ...
 type RabbitMQ struct {
 	Connection *amqp.Connection
 	Channel    *amqp.Channel
 	Queue      *amqp.Queue
 }
 
-// New...
+// New ...
 func New(config Config) (*RabbitMQ, error) {
 
 	uri := amqp.URI{

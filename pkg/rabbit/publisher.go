@@ -2,6 +2,7 @@ package rabbit
 
 import "github.com/streadway/amqp"
 
+// Publisher ...
 type Publisher struct {
 	*RabbitMQ
 
@@ -10,7 +11,7 @@ type Publisher struct {
 	Immidiate   bool
 }
 
-// NewPublisher...
+// NewPublisher ...
 func NewPublisher(config PublisherConfig, contentType string) (*Publisher, error) {
 	mq, err := New(*config.Config)
 	if err != nil {
@@ -24,7 +25,7 @@ func NewPublisher(config PublisherConfig, contentType string) (*Publisher, error
 	}, nil
 }
 
-// Publish...
+// Publish ...
 func (p Publisher) Publish(body []byte) error {
 	return p.Channel.Publish(
 		"",
