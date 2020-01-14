@@ -22,7 +22,15 @@ services:
       MONGODB_PASS: "dev"
     ports:
       - "27016:27016"
-    network_mode: "host"
+
+  fetcher:
+    build: 
+      context: ./services/fetcher
+      dockerfile: Dockerfile
+    hostname: fetcher
+    networks:
+      - cluster-network
+  
 
 networks:
   cluster-network:
