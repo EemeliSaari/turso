@@ -2,13 +2,10 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
-	"io/ioutil"
 	"log"
 
 	"github.com/streadway/amqp"
 
-	"github.com/EemeliSaari/turso/internal/utils"
 	"github.com/EemeliSaari/turso/pkg/rabbit"
 	"github.com/EemeliSaari/turso/pkg/rss"
 )
@@ -27,18 +24,8 @@ func handler(delivery amqp.Delivery) {
 	if err != nil {
 		log.Print("Failed to deserialize message when parsing.")
 	}
+	//TODO
 	log.Printf("Stored article: %s", article.Title)
-}
-
-func main2() {
-	var article storedArticle
-
-	file, err := ioutil.ReadFile("data/0a0208a1ba159404ca99cd5f58271fb5.json")
-
-	utils.FailOnError(err, "")
-	err = json.Unmarshal([]byte(file), &article)
-
-	fmt.Println(article)
 }
 
 func main() {
