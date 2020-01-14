@@ -1,4 +1,4 @@
-package crawl
+package rss
 
 import (
 	"bytes"
@@ -11,18 +11,7 @@ import (
 	"golang.org/x/net/html"
 )
 
-// Crawler ...
-type Crawler struct {
-}
-
-// NewCrawler ...
-func NewCrawler() *Crawler {
-	c := Crawler{}
-	return &c
-}
-
-// FindArticleContent ...
-func (c Crawler) FindArticleContent(data []byte) (string, error) {
+func findArticleContent(data []byte) (string, error) {
 	if len(data) == 0 {
 		return "", errors.New("empty data received")
 	}

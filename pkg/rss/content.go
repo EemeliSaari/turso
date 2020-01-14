@@ -9,7 +9,6 @@ import (
 	"runtime"
 	"sync"
 
-	"github.com/EemeliSaari/turso/pkg/crawl"
 	"github.com/mmcdole/gofeed"
 )
 
@@ -57,8 +56,7 @@ func (a Article) fetchHTML() {
 		panic(err)
 	}
 
-	crawler := crawl.NewCrawler()
-	content, err := crawler.FindArticleContent(html)
+	content, err := findArticleContent(html)
 	if err != nil {
 		a.Erroneous = err.Error()
 	} else {

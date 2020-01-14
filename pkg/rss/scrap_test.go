@@ -1,4 +1,4 @@
-package crawl
+package rss
 
 import (
 	"io/ioutil"
@@ -8,8 +8,6 @@ import (
 )
 
 func TestFindContent(t *testing.T) {
-
-	crawler := NewCrawler()
 
 	tests := []struct {
 		path     string
@@ -29,7 +27,7 @@ func TestFindContent(t *testing.T) {
 	for _, test := range tests {
 		data := loadHTML(test.path)
 
-		content, err := crawler.FindArticleContent(data)
+		content, err := findArticleContent(data)
 
 		if test.hasError {
 			assert.NotNil(t, err)
