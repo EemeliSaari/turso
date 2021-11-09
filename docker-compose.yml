@@ -1,36 +1,75 @@
 version: "3.3"
 
 services:
+
   rabbit:
+    container_name: rabbit
     image: rabbitmq
     hostname: rabbit
     environment:
       RABBITMQ_DEFAULT_USER: "dev"
       RABBITMQ_DEFAULT_PASS: "dev"
       RABBITMQ_DEFAULT_VHOST: "/"
+    restart: always
     ports:
-      - "15672:15672"
-      - "5672:5672"
+      - 15672:15672
+      - 5672:5672
     networks:
       - cluster-network
 
-  mongo:
-    image: mongo
-    hostname: mongo
-    environment:
-      MONGODB_USER: "dev" 
-      MONGODB_PASS: "dev"
+  db:
+    image: postgres
+    restart: always
     ports:
-      - "27016:27016"
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: example
+      POSTGRES_DB: turso
+    networks:
+      - cluster-network
 
   fetcher:
-    build: 
+    hostname: fetcher
+    build:
       context: ./services/fetcher
       dockerfile: Dockerfile
-    hostname: fetcher
+    restart: always
     networks:
       - cluster-network
-  
+
+  storage:
+    hostname: storage
+    build:
+      context: ./services/storage
+      dockerfile: Dockerfile
+    restart: always
+    networks:
+      - cluster-network
+
+  rest:
+    hostname: endpoint
+    build:
+      context: ./web/rest
+      dockerfile: Dockerfile
+    entrypoint: npm start
+    restart: always
+    ports:
+      - 7500:7500
+    networks:
+      - cluster-network
+
+  front:
+    hostname: front
+    build:
+      context: ./web/frontend
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - 3000:3000
+    networks: 
+      - cluster-network
+    volumes:
+      - ./web/frontend:/app
 
 networks:
   cluster-network:
