@@ -1,10 +1,10 @@
 CREATE TABLE articles (
     id SERIAL PRIMARY KEY,
     title TEXT,
-    description TEXT,
+    short_description TEXT,
     link TEXT,
     published DATETIME,
-    guid TEXT,
+    article_guid TEXT,
     is_LOADED BOOL,
-    checksum TEXT
+    article_checksum TEXT
 );
