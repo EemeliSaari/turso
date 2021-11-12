@@ -23,8 +23,9 @@ services:
     ports:
       - 5432:5432
     environment:
-      POSTGRES_PASSWORD: example
-      POSTGRES_DB: turso
+      POSTGRES_USER: $POSTGRES_UID
+      POSTGRES_PASSWORD: $POSTGRES_PWD
+      POSTGRES_DB: $POSTGRES_DB
     networks:
       - cluster-network
 
@@ -45,31 +46,6 @@ services:
     restart: always
     networks:
       - cluster-network
-
-  rest:
-    hostname: endpoint
-    build:
-      context: ./web/rest
-      dockerfile: Dockerfile
-    entrypoint: npm start
-    restart: always
-    ports:
-      - 7500:7500
-    networks:
-      - cluster-network
-
-  front:
-    hostname: front
-    build:
-      context: ./web/frontend
-      dockerfile: Dockerfile
-    restart: always
-    ports:
-      - 3000:3000
-    networks: 
-      - cluster-network
-    volumes:
-      - ./web/frontend:/app
 
 networks:
   cluster-network:
