@@ -1,5 +1,7 @@
-FROM golang:1.13.5
+FROM golang:1.17.3
 
-RUN go get -t github.com/EemeliSaari/turso
-RUN go get -t github.com/mmcdole/gofeed
-RUN go get -t github.com/streadway/amqp
+# Install golang-migrate
+# https://github.com/golang-migrate/migrate/tree/master/cmd/migrate
+RUN go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+RUN export PATH=$PATH:/usr/local/go/bin
+
